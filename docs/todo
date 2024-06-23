@@ -1,0 +1,21 @@
+- [ ] REPL
+- [ ] CRUD
+- [ ] BTree
+- [ ] File Oriented Database
+- [ ] Mutex for transaction locking
+- [ ] Caching System
+
+- Interface
+- Command Analyzer
+	- Tokenizer
+	- Parser
+	- Generator (bytecode)
+- Virtual Machine
+- OS Interface
+
+Example:
+
+create database test; -> create folder
+create table test_table (pid int primary key, fn varchar(255), ln varchar(255)); -> create file
+insert into test_table (fn, ln) values ("Sql", "Mutex"); -> insert into file
+select * from test_table;
