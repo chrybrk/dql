@@ -1,8 +1,8 @@
 #include "include/REPL.h"
 
-T_input_buffer* init_input_buffer()
+input_buffer_T* init_input_buffer()
 {
-	T_input_buffer* new_input_buffer = calloc(1, sizeof(struct INPUT_BUFFER_STRUCT));
+	input_buffer_T* new_input_buffer = calloc(1, sizeof(struct INPUT_BUFFER_STRUCT));
 	new_input_buffer->buffer = NULL;
 	new_input_buffer->buffer_length = 0;
 	new_input_buffer->input_length = 0;
@@ -10,7 +10,7 @@ T_input_buffer* init_input_buffer()
 	return new_input_buffer;
 }
 
-void input_buffer_read(T_input_buffer* input_buffer)
+void input_buffer_read(input_buffer_T* input_buffer)
 {
 	ssize_t total_bytes_read = getline(&input_buffer->buffer, &input_buffer->buffer_length, stdin);
 

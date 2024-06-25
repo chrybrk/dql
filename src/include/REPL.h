@@ -12,12 +12,12 @@ typedef struct INPUT_BUFFER_STRUCT {
 	char* 	buffer;
 	size_t 	buffer_length;
 	ssize_t input_length;
-} T_input_buffer;
+} input_buffer_T;
 
 // initialize input_buffer
-T_input_buffer* init_input_buffer();
+input_buffer_T* init_input_buffer();
 
 // read input from console and store into INPUT_BUFFER_STRUCT
-void input_buffer_read(T_input_buffer* input_buffer);
+void input_buffer_read(input_buffer_T* input_buffer);
 
 #endif
