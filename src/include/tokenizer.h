@@ -1,4 +1,5 @@
 #ifndef __TOKENIZER_H__
+#define __TOKENIZER_H__
 
 #include "array.h"
 #include "hash.h"
@@ -10,13 +11,19 @@
 
 // TokenType
 typedef enum {
-	COMMAND_EXIT // it will exit the program
+	COMMAND_EXIT, // it will exit the program
+	STRING,
+	DIGIT,
+	CREATE,
+	INSERT,
+	SELECT
 } TokenType;
 
 // TOKEN_STRUCT holds the token information.
 typedef struct TOKEN_STRUCT
 {
 	TokenType type;
+	int integer;
 	char* value;
 } token_T;
 
@@ -37,7 +44,7 @@ typedef struct TOKEN_BUFFER_STRUCT
 token_T* init_token(TokenType type, char* value);
 
 // print token
-void token_print(token_T* token);
+char* token_print(TokenType ttype);
 
 // init token buffer
 token_buffer_T* init_token_buffer();
