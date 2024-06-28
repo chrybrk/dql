@@ -1,90 +1,104 @@
-#include <stdio.h>
 #include <string.h>
 #include "include/hash.h"
 
-// utility function
-ssize_t hash_get_index(char* key, ssize_t max_size)
+#define MAX_HASH_TABLE_CAPACITY 1024
+
+typedef struct {
+	const char* key;
+	void* value;
+} hash_entry;
+
+typedef struct HASH_STRUCT {
+	hash_entry* buffer;
+	ssize_t capacity;
+	ssize_t length;
+} hash_T;
+
+/*
+ * Hashing function
+ * 
+ * It is a djb2 hashing function.
+ * reference: http://www.cse.yorku.ca/~oz/hash.html
+ *
+ * Legal Notice:
+ * I am not the godfather of this hashing function but if it works on your project, use it.
+*/
+unsigned long long
+hash_function(const char* string)
 {
-	// formula
-	ssize_t index = 0;
-	for (size_t i = 0; i < strlen(key); i++)
+	// magic number was supposed to be `33`.
+	unsigned long hash = 5381;
+	int c;
+
+	while ((c = *string++) != 0)
+			hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+	return hash;
+}
+
+hash_T* init_hash(void)
+{
+	hash_T* hash = malloc(sizeof(struct HASH_STRUCT));
+	if (hash == NULL) return NULL;
+
+	hash->length = 0;
+	hash->capacity = MAX_HASH_TABLE_CAPACITY;
+	hash->buffer = malloc(sizeof(hash_entry) * hash->capacity);
+	if (hash->buffer == NULL)
 	{
-		index += (int)key[i];
+		free(hash);
+		return NULL;
 	}
 
-	// clamp it to max size
-	index = index % max_size;
+	return hash;
+}
+
+void hash_free(hash_T* hash)
+{
+	free(hash->buffer);
+	free(hash);
+}
+
+void hash_set(hash_T* hash, const char* key, void* value)
+{
+	unsigned long long magic_number = hash_function(key);
+	ssize_t index = (ssize_t)(magic_number & (MAX_HASH_TABLE_CAPACITY - 1));
+
+	int if_found = 0;
+
+	while (hash->buffer[index].key != NULL)
+	{
+		if (strcmp(key, hash->buffer[index].key) == 0)
+		{
+			hash->buffer[index].value = value;
+			if_found = 1;
+			break;
+		}
+
+		index++;
+		if (index >= MAX_HASH_TABLE_CAPACITY) index = 0;
+	}
+
+	if (if_found == 0)
+	{
+		hash->buffer[index].key = (const char*)strdup(key);
+		hash->buffer[index].value = value;
+	}
+}
+
+void* hash_get(hash_T* hash, const char* key)
+{
+	unsigned long long magic_number = hash_function(key);
+	ssize_t index = (ssize_t)(magic_number & (MAX_HASH_TABLE_CAPACITY - 1));
+
+	while (hash->buffer[index].key != NULL)
+	{
+		if (strcmp(key, hash->buffer[index].key) == 0)
+			return hash->buffer[index].value;
+
+		index++;
+		if (index >= MAX_HASH_TABLE_CAPACITY) index = 0;
+	}
 	
-	return index;
-}
-
-hash_T* init_hash(ssize_t max_size)
-{
-	hash_T* new_hash = calloc(1, sizeof(struct HASH_STRUCT));
-	new_hash->pairs = calloc(1, new_hash->size * sizeof(HashPair));
-	new_hash->size = max_size;
-	return new_hash;
-}
-
-void hash_insert(hash_T* hash, char* key, ssize_t value)
-{
-	ssize_t index = hash_get_index(key, hash->size);
-
-	// retrive already existing value *if
-	HashPair* try_existing_value = hash->pairs[index];
-
-	if (!try_existing_value)
-	{
-		HashPair* new_pair = calloc(1, sizeof(HashPair));
-		new_pair->key = key;
-		new_pair->value = value;
-		hash->pairs[index] = new_pair;
-	}
-	else
-	{
-		int flag = 1;
-		for (ssize_t i = index; i < hash->size; i++)
-		{
-			try_existing_value = hash->pairs[i];
-
-			if (try_existing_value && !strcmp(key, try_existing_value->key))
-			{
-				printf("[ERROR]: hash: failed to insert `%s` into hashmap, it already exist.\n", key);
-				exit(EXIT_FAILURE);
-			}
-			else
-			{
-				HashPair* new_pair = calloc(1, sizeof(HashPair));
-				new_pair->key = key;
-				new_pair->value = value;
-				hash->pairs[i] = new_pair;
-				flag = 0;
-			}
-		}
-
-		if (!flag)
-		{
-			printf("[ERROR]: hash: failed to insert `%s`, overflow.\n", key);
-			exit(EXIT_FAILURE);
-		}
-	}
-}
-
-HashPair* hash_find(hash_T* hash, char* key)
-{
-	ssize_t index = hash_get_index(key, hash->size);
-
-	// retrive already existing value *if
-	HashPair* try_existing_value = hash->pairs[index];
-	if (!try_existing_value) return NULL;
-
-	if (!strcmp(key, try_existing_value->key)) return try_existing_value;
-
-	for (ssize_t i = index + 1; i < hash->size; i++)
-	{
-		try_existing_value = hash->pairs[index];
-		if (!strcmp(key, try_existing_value->key)) return try_existing_value;
-	}
-
 	return NULL;
 }

@@ -42,6 +42,8 @@ typedef struct AST_STRUCT
 	char* string_value;
 	int digit_value;
 
+	token_T* token;
+
 	array_T* statement;
 } ast_T;
 

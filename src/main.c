@@ -1,21 +1,20 @@
 #include <stdbool.h>
-#include "include/global_pointers.h"
+#include "include/defs.h"
 #include "include/hash.h"
 #include "include/REPL.h"
 #include "include/tokenizer.h"
 #include "include/analyzer.h"
+#include "include/generator.h"
 
-// TODO: move keywords to tokenizer
-
-hash_T* keywords;
+hash_T* tokenizer_keywords;
 
 int main(void)
 {
-	keywords = init_hash(1024);
-	hash_insert(keywords, ".exit", COMMAND_EXIT);
-	hash_insert(keywords, "insert", INSERT);
-	hash_insert(keywords, "create", CREATE);
-	hash_insert(keywords, "select", SELECT);
+	tokenizer_keywords = init_hash();
+	hash_set(tokenizer_keywords, ".exit", (void*)&(struct tokenizer_keyword_data){ .value = COMMAND_EXIT });
+	hash_set(tokenizer_keywords, "insert", (void*)&(struct tokenizer_keyword_data){ .value = INSERT });
+	hash_set(tokenizer_keywords, "create", (void*)&(struct tokenizer_keyword_data){ .value = CREATE });
+	hash_set(tokenizer_keywords, "select", (void*)&(struct tokenizer_keyword_data){ .value = SELECT });
 
 	input_buffer_T* buffer = init_input_buffer();
 	token_buffer_T* t_buffer = init_token_buffer();
@@ -27,8 +26,13 @@ int main(void)
 		input_buffer_read(buffer);
 		token_buffer_create(t_buffer, buffer->buffer);
 
-		analyzer_T* analyzer = init_analyzer(t_buffer->token_buffer);
-		ast_T* root = analyzer_analyze(analyzer);
+		for (ssize_t i = 0; i < t_buffer->token_buffer->index; i++)
+			printf("%s\n", token_print(((token_T*)t_buffer->token_buffer->buffer[i])->type));
+
+		// analyzer_T* analyzer = init_analyzer(t_buffer->token_buffer);
+		// ast_T* root = analyzer_analyze(analyzer);
+		// generator_T* generator = init_generator(".");
+		// generator_generate(root);
 	}
 
 	return 0;

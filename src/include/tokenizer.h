@@ -16,7 +16,8 @@ typedef enum {
 	DIGIT,
 	CREATE,
 	INSERT,
-	SELECT
+	SELECT,
+	EOS // end of statement
 } TokenType;
 
 // TOKEN_STRUCT holds the token information.

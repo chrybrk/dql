@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "include/analyzer.h"
 
 ast_T* init_ast(AST_TYPE type)
@@ -27,7 +28,7 @@ token_T* analyzer_consume(analyzer_T* analyzer, TokenType ttype)
 		return token;
 	}
 
-	printf("Expected `%s` got `%s`.", token_print(ttype), token_print(analyzer->current_token->type));
+	printf("Expected `%s` got `%s`.\n", token_print(ttype), token_print(analyzer->current_token->type));
 
 	return NULL;
 }
@@ -37,12 +38,17 @@ ast_T* analyzer_analyze(analyzer_T* analyzer)
 	ast_T* statement = init_ast(AST_STATEMENT);
 	statement->statement = init_array(sizeof(struct AST_STRUCT));
 
+	ast_T* returned_ast = NULL;
+
 	switch (analyzer->current_token->type)
 	{
-		case CREATE: array_push(statement->statement, analyzer_create(analyzer)); break;
-		case COMMAND_EXIT: exit(EXIT_SUCCESS);
+		case CREATE: returned_ast = analyzer_create(analyzer); break;
+		case COMMAND_EXIT: exit(EXIT_SUCCESS); break;
 		default: printf("invalid syntax.\n"), analyzer_consume(analyzer, analyzer->current_token->type);
 	}
+	
+	if (returned_ast)
+		array_push(statement->statement, returned_ast);
 
 	return statement;
 }
@@ -50,6 +56,21 @@ ast_T* analyzer_analyze(analyzer_T* analyzer)
 ast_T* analyzer_create(analyzer_T* analyzer)
 {
 	ast_T* create_ast = init_ast(AST_CREATE);
+	analyzer_consume(analyzer, CREATE);
+
+	token_T* create_type = analyzer_consume(analyzer, STRING);
+	token_T* name_of_creation = analyzer_consume(analyzer, STRING);
+
+	if (!create_type || !name_of_creation) return NULL;
+
+	ast_T* left_node = init_ast(strcmp(create_type->value, "db") ? AST_TABLE : AST_DATABASE);
+	ast_T* right_node = init_ast(AST_EXPR);
+
+	if (name_of_creation)
+		right_node->token = name_of_creation;
+
+	create_ast->left = left_node;
+	create_ast->right = right_node;
 
 	return create_ast;
 }
