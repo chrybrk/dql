@@ -16,6 +16,33 @@
 Example:
 
 create database test; -> create folder
+use test;
 create table test_table (pid int primary key, fn varchar(255), ln varchar(255)); -> create file
 insert into test_table (fn, ln) values ("Sql", "Mutex"); -> insert into file
 select * from test_table;
+
+if we need to handle transaction,
+we need to recive data from multiple clients at one pool.
+
+then, create buffer of transaction.
+whichever process takes place in the pool.
+
+take one process out and lock the pool in mutex.
+deadlock mechanism.
+
+Creating `db` will create folder and store it in hashmap.
+With this data-structure
+
+hahsmap_key -> db_name
+hashmap_value -> {
+	hashmap tables {
+		_key;
+		array<table_value {
+			var_name <- string;
+			dt <- enum table_datatype;
+			primary <- bool;
+			not_null <- bool;
+		}> value;
+	}
+}
+

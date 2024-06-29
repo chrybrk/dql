@@ -30,6 +30,9 @@ char* token_print(TokenType ttype)
 {
 	switch (ttype)
 	{
+		case COMMA: return "COMMA";
+		case LPARAN: return "LPARAN";
+		case RPARAN: return "RPARAN";
 		case COMMAND_EXIT: return "COMMAND_EXIT";
 		case STRING: return "STRING";
 		case DIGIT: return "DIGIT";
@@ -37,7 +40,6 @@ char* token_print(TokenType ttype)
 		case CREATE: return "CREATE";
 		case SELECT: return "SELECT";
 		case EOS: return "EOS(end of statement)";
-		default: return NULL;
 	}
 }
 
@@ -114,6 +116,34 @@ void token_buffer_create(token_buffer_T* token_buffer, char* buffer)
 
 		if (isdigit(b_data.c)) array_push(token_buffer->token_buffer, buffer_digit(&b_data));
 		if (isalpha(b_data.c) || b_data.c == '.') array_push(token_buffer->token_buffer, buffer_string(&b_data));
+
+		switch (b_data.c)
+		{
+			case ',':
+			{
+				token_T* token = init_token(COMMA, ",");
+				buffer_advance(&b_data);
+
+				array_push(token_buffer->token_buffer, token);
+				break;
+			}
+			case '(':
+			{
+				token_T* token = init_token(LPARAN, "(");
+				buffer_advance(&b_data);
+
+				array_push(token_buffer->token_buffer, token);
+				break;
+			}
+			case ')':
+			{
+				token_T* token = init_token(RPARAN, ")");
+				buffer_advance(&b_data);
+
+				array_push(token_buffer->token_buffer, token);
+				break;
+			}
+		}
 	}
 
 	array_push(token_buffer->token_buffer, init_token(EOS, NULL));

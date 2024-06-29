@@ -26,7 +26,7 @@ typedef struct HASH_STRUCT {
 unsigned long long
 hash_function(const char* string)
 {
-	// magic number was supposed to be `33`.
+	// magic number is supposed to be `33`.
 	unsigned long hash = 5381;
 	int c;
 

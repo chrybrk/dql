@@ -25,14 +25,10 @@ int main(void)
 
 		input_buffer_read(buffer);
 		token_buffer_create(t_buffer, buffer->buffer);
-
-		for (ssize_t i = 0; i < t_buffer->token_buffer->index; i++)
-			printf("%s\n", token_print(((token_T*)t_buffer->token_buffer->buffer[i])->type));
-
-		// analyzer_T* analyzer = init_analyzer(t_buffer->token_buffer);
-		// ast_T* root = analyzer_analyze(analyzer);
-		// generator_T* generator = init_generator(".");
-		// generator_generate(root);
+		analyzer_T* analyzer = init_analyzer(t_buffer->token_buffer);
+		ast_T* root = analyzer_analyze(analyzer);
+		generator_T* generator = init_generator(".");
+		generator_generate(generator, root);
 	}
 
 	return 0;

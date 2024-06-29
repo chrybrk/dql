@@ -11,6 +11,9 @@
 
 // TokenType
 typedef enum {
+	COMMA,
+	LPARAN,
+	RPARAN,
 	COMMAND_EXIT, // it will exit the program
 	STRING,
 	DIGIT,
