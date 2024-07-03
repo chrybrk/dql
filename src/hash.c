@@ -12,6 +12,7 @@ typedef struct HASH_STRUCT {
 	hash_entry* buffer;
 	ssize_t capacity;
 	ssize_t length;
+	char** keys;
 } hash_T;
 
 /*
@@ -55,6 +56,7 @@ hash_T* init_hash(void)
 
 void hash_free(hash_T* hash)
 {
+	free(hash->keys);
 	free(hash->buffer);
 	free(hash);
 }
@@ -83,6 +85,14 @@ void hash_set(hash_T* hash, const char* key, void* value)
 	{
 		hash->buffer[index].key = (const char*)strdup(key);
 		hash->buffer[index].value = value;
+		hash->length++;
+
+		if (hash->keys)
+			hash->keys = realloc(hash->keys, sizeof(char*) * hash->length);
+		else
+			hash->keys = calloc(1, sizeof(char*));
+
+		hash->keys[hash->length - 1] = (char*)strdup(key);
 	}
 }
 
@@ -101,4 +111,9 @@ void* hash_get(hash_T* hash, const char* key)
 	}
 	
 	return NULL;
+}
+
+const char** hash_bucket(hash_T* hash)
+{
+	return (const char**)hash->keys;
 }

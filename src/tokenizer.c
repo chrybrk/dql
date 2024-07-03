@@ -95,8 +95,7 @@ token_T* buffer_string(struct buffer_data* b_data)
 	char* word = collect_string_from_buffer(b_data, alpha_dot);
 
 	void* _hp = hash_get(tokenizer_keywords, word);
-	printf("%s - %p\n", word, _hp);
-	token_T* token = init_token(_hp ? ((struct tokenizer_keyword_data*)_hp)->value : STRING, word);
+	token_T* token = init_token(_hp ? ((struct store_keyword*)_hp)->value : STRING, word);
 
 	return token;
 }

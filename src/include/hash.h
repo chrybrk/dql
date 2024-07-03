@@ -37,6 +37,12 @@ hash_T* init_hash(void);
 void hash_free(hash_T*);
 
 /*
+ * It will return list of keys,
+ * that are present int the hashmap.
+*/
+const char** hash_bucket(hash_T*);
+
+/*
  * It will set the value if it founds the key in entry,
  * else it will create new entry.
 */

@@ -17,49 +17,6 @@
 */
 
 /*
- * IDEAS?
- *
- * We may need to store which database, and its schemes.
- *
- * struct {
- *	database;
- *	table;
- *	scheme {
- *		**clm_name,
- *		**clm_data_type
- *	}
- * }
-*/
-
-/*
- * table structure
- *
- * it consist of variable name,
- * variable data type,
- * variable data size,
- * if it is primary key or not,
- * if the value must be null or not.
-*/
-typedef struct TABLE
-{
-	const char* var_name;
-	enum {
-		INT,
-		FLOAT,
-		CHAR
-	} data_type;
-	int data_type_size;
-	int primary;
-	int not_null;
-} table_T;
-
-/*
- * init table data
- * var_name, data_type, data_type_size, isPrimary, isNotNull
-*/
-table_T* init_table_structure(const char*, int, int, int, int);
-
-/*
  * GENERATOR_STRUCT will hold the generator as well as db info.
  * db are just folder that have been created somewhere in filesystem.
  * each folder name becomes a key in hashmap.

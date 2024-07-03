@@ -77,6 +77,12 @@ token_T* analyzer_consume(analyzer_T*, TokenType);
 ast_T* analyzer_analyze(analyzer_T*);
 
 /*
+ * expr analyzer and returns new expr ast.
+ * takes analyzer_T*
+*/
+ast_T* analyzer_analyze_expr(analyzer_T*);
+
+/*
  * EACH MAJOR AST NODE
  * will have its own funcion
 */

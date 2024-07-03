@@ -5,24 +5,6 @@
 #include <string.h>
 #include "include/generator.h"
 
-table_T*
-init_table_structure(
-		const char* var_name,
-		int data_type,
-		int data_type_size,
-		int isPrimary,
-		int isNotNull)
-{
-	table_T* table = calloc(1, sizeof(struct TABLE));
-	table->var_name = var_name;
-	table->data_type = data_type;
-	table->data_type_size = data_type_size;
-	table->primary = isPrimary;
-	table->not_null = isNotNull;
-
-	return table;
-}
-
 generator_T* init_generator(char* path)
 {
 	generator_T* new_generator = calloc(1, sizeof(struct GENERATOR_STRUCT));
@@ -62,7 +44,7 @@ void create_database(generator_T* generator, ast_T* root)
 {
 	int sucess = mkdir(root->right->token->value, S_IRWXU | S_IRWXG | S_IRWXO);
 
-	if (!sucess) printf("Error creating database.\n");
+	if (sucess) printf("Error creating database.\n");
 	else
 	{
 		/*
@@ -76,29 +58,10 @@ void create_database(generator_T* generator, ast_T* root)
 
 void create_table(generator_T* generator, ast_T* root)
 {
-	/*
-	 * if current_db is NULL then we are not inside any database.
-	 * else
-	 * 	we need to create a file named after `create table <name>`,
-	 * 	also, we need to parse the parameters.
-	 *
-	 * 	create table <name> (structure)
-	 *
-	 * 	but, we do not want to store the data on our memory.
-	 * 	so, insert command will and should be performed on file itself.
-	*/
 	if (generator->current_db == NULL)
 		printf("you're not inside database, use `use <db>` command to use a database.\n");
 	else
 	{
-		/*
-		 * Create array of `table_T` which will store the structure.
-		 * array will be the value of database->table->value
-		 *
-		 * where database and table are hashmap.
-		*/
-
-		array_T* buffer_of_table_structure = init_array(sizeof(struct TABLE));
 	}
 }
 
