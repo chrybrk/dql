@@ -38,7 +38,16 @@ int main(void)
 		ast_T* root = analyzer_analyze(analyzer);
 		generator_T* generator = init_generator(".");
 		generator_generate(generator, root);
+
+		free(analyzer);
+		free(root);
+		free(generator);
 	}
+
+	free(buffer);
+	free(t_buffer);
+	hash_free(tokenizer_keywords);
+	hash_free(table_metadata_keywords);
 
 	return 0;
 }
